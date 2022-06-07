@@ -1,7 +1,6 @@
 package persistence;
 
 import java.sql.SQLException;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import org.hibernate.SessionFactory;
@@ -25,7 +24,6 @@ public class AlunoDao implements IAlunoDisciplina<Aluno> {
 		transaction.begin();
 		entityManager.persist(aluno);
 		transaction.commit();
-
 	}
 
 	@Override
@@ -54,9 +52,24 @@ public class AlunoDao implements IAlunoDisciplina<Aluno> {
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public List<Aluno> selectAll() {
-		// TODO Auto-generated method stub
-		return null;
+		StringBuffer sql = new StringBuffer();
+		sql.append("SELECT * from aluno");
+		EntityManager entityManager = sf.createEntityManager();
+		Query query = entityManager.createNativeQuery(sql.toString());
+		List<Object[]> alunosResultSet = query.getResultList();
+		List<Aluno> alunos = new ArrayList<Aluno>();
+		for (Object[] o : alunosResultSet) {
+			Aluno aluno = new Aluno();
+			aluno.setRa((o[0].toString()));
+			aluno.setEmail(o[1].toString());
+			aluno.setNome((o[2].toString()));
+			aluno.setPosicaoVestibular(Integer.parseInt(o[3].toString()));
+			alunos.add(aluno);
+		}
+		
+		return alunos;
 	}
 
 }
